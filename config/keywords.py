@@ -123,6 +123,11 @@ TOP_PUBLISHERS = {
         "url": "https://www.infosecurity-magazine.com",
         "rss": "https://www.infosecurity-magazine.com/rss/news/",
     },
+    "TLDR InfoSec": {
+        "url": "https://tldr.tech/infosec",
+        "rss": None,  # No public RSS - requires web scraping
+        "subscribers": "410,000+",
+    },
 }
 
 # Reddit subreddits to monitor
