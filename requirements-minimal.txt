@@ -1,0 +1,26 @@
+# Core dependencies for weekly refresh automation
+# This is a minimal set to avoid dependency conflicts in GitHub Actions
+
+# Web Scraping
+beautifulsoup4
+requests
+
+# Reddit API (optional - using mock data for now)
+# praw
+
+# RSS Feed Parsing
+feedparser
+
+# NLP & Entity Extraction
+spacy>=3.0.0,<4.0.0
+
+# AI APIs
+google-generativeai
+openai
+
+# Data Processing
+pandas
+python-dotenv
+
+# Utilities
+python-dateutil
