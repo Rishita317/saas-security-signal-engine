@@ -68,6 +68,29 @@ def load_latest_data():
     return df, timestamp
 
 
+@st.cache_data
+def load_conversation_data():
+    """Load the most recent conversation signals CSV"""
+    data_dir = "data"
+    csv_files = glob.glob(f"{data_dir}/conversation_signals_*.csv")
+
+    if not csv_files:
+        return None, None
+
+    # Get the most recent file
+    latest_file = max(csv_files, key=os.path.getctime)
+    df = pd.read_csv(latest_file)
+
+    # Parse dates
+    if 'published_at' in df.columns:
+        df['published_at'] = pd.to_datetime(df['published_at'])
+
+    # Extract timestamp from filename
+    timestamp = latest_file.split('_')[-2] + '_' + latest_file.split('_')[-1].replace('.csv', '')
+
+    return df, timestamp
+
+
 def create_category_chart(df):
     """Create a bar chart of jobs by category"""
     category_counts = df['job_category'].value_counts().reset_index()
@@ -153,15 +176,26 @@ def create_timeline_chart(df):
 def main():
     # Header
     st.markdown('<p class="main-header">🔐 SaaS Security Signal Engine</p>', unsafe_allow_html=True)
-    st.markdown("**Automated GTM Intelligence for SaaS Security Hiring Signals**")
+    st.markdown("**Automated GTM Intelligence - Weekly Refreshed Data**")
     st.markdown("---")
 
+    # Create tabs
+    tab1, tab2 = st.tabs(["📊 Hiring Signals", "💬 Conversation Signals"])
+
+    with tab1:
+        show_hiring_signals()
+
+    with tab2:
+        show_conversation_signals()
+
+
+def show_hiring_signals():
+    """Display hiring signals dashboard"""
     # Load data
     df, timestamp = load_latest_data()
 
     if df is None:
-        st.error("No data found. Please run `python test_pipeline.py` to generate data first.")
-        st.info("💡 **How to generate data:**\n```bash\nsource venv/bin/activate\npython test_pipeline.py\n```")
+        st.error("No hiring data found. Please run `python test_pipeline_gemini.py` to generate data first.")
         return
 
     # Sidebar
@@ -337,10 +371,125 @@ def main():
         """
         <div style='text-align: center; color: #666; padding: 1rem;'>
             <p>🔐 SaaS Security Signal Engine | Built for Obsidian Security AI GTM Engineer Role</p>
-            <p>Powered by GPT-4 Mini, spaCy NLP, and Streamlit</p>
+            <p>Powered by Google Gemini, spaCy NLP, and Streamlit</p>
         </div>
         """,
         unsafe_allow_html=True,
+    )
+
+
+def show_conversation_signals():
+    """Display conversation signals dashboard"""
+    # Load conversation data
+    df, timestamp = load_conversation_data()
+
+    if df is None:
+        st.error("No conversation data found. Please run `python test_conversation_pipeline.py` to generate data first.")
+        return
+
+    st.subheader("💬 Conversation Signals - What People Are Saying")
+    st.info(f"**Last Updated:** {timestamp} | **Total Conversations:** {len(df)}")
+
+    # Key metrics
+    col1, col2, col3, col4 = st.columns(4)
+
+    with col1:
+        st.metric("Total Items", len(df))
+
+    with col2:
+        if 'publisher' in df.columns:
+            unique_publishers = df[df['platform'].isin(['rss', 'tldr_infosec'])]['publisher'].nunique()
+        else:
+            unique_publishers = 0
+        st.metric("Publishers", unique_publishers)
+
+    with col3:
+        avg_relevance = df['relevance_score'].mean()
+        st.metric("Avg Relevance", f"{avg_relevance:.2f}")
+
+    with col4:
+        if 'urgency' in df.columns:
+            high_urgency = df[df['urgency'].isin(['breaking', 'high'])].shape[0]
+        else:
+            high_urgency = 0
+        st.metric("High Urgency", high_urgency)
+
+    st.markdown("---")
+
+    # Top contributors table (Reddit)
+    reddit_df = df[df['platform'] == 'reddit'].copy()
+    if len(reddit_df) > 0 and 'author' in reddit_df.columns:
+        st.subheader("🏆 Top Contributors (Reddit)")
+        contributor_counts = reddit_df['author'].value_counts().head(10)
+        contributor_df = pd.DataFrame({
+            'Contributor': contributor_counts.index,
+            'Posts': contributor_counts.values
+        })
+        st.dataframe(contributor_df, use_container_width=True)
+
+    st.markdown("---")
+
+    # Top publishers table
+    publisher_df = df[df['platform'].isin(['rss', 'tldr_infosec'])].copy()
+    if len(publisher_df) > 0 and 'publisher' in publisher_df.columns:
+        st.subheader("📰 Top Publishers")
+        publisher_counts = publisher_df['publisher'].value_counts().head(10)
+        publisher_table = pd.DataFrame({
+            'Publisher': publisher_counts.index,
+            'Articles': publisher_counts.values
+        })
+        st.dataframe(publisher_table, use_container_width=True)
+
+    st.markdown("---")
+
+    # Trending/High urgency conversations
+    if 'urgency' in df.columns:
+        high_urgency_df = df[df['urgency'].isin(['breaking', 'high'])].copy()
+        if len(high_urgency_df) > 0:
+            st.subheader("🔥 High Urgency / Breaking News")
+            for idx, row in high_urgency_df.head(5).iterrows():
+                with st.expander(f"[{row['urgency'].upper()}] {row['title'][:80]}..."):
+                    st.write(f"**Platform:** {row['platform']}")
+                    st.write(f"**Category:** {row.get('category', 'N/A')}")
+                    st.write(f"**Relevance:** {row['relevance_score']:.2f}")
+                    if 'url' in row and pd.notna(row['url']):
+                        st.write(f"**URL:** {row['url']}")
+
+    st.markdown("---")
+
+    # Full data table
+    st.subheader("📋 All Conversations")
+
+    # Search
+    search_query = st.text_input("🔍 Search conversations", "")
+
+    display_df = df.copy()
+    if search_query:
+        mask = (
+            display_df['title'].str.contains(search_query, case=False, na=False) |
+            display_df.get('publisher', pd.Series([''] * len(display_df))).str.contains(search_query, case=False, na=False)
+        )
+        display_df = display_df[mask]
+
+    # Format for display
+    display_cols = ['platform', 'title', 'category', 'relevance_score']
+    if 'urgency' in display_df.columns:
+        display_cols.append('urgency')
+    if 'publisher' in display_df.columns:
+        display_cols.append('publisher')
+
+    display_df = display_df[display_cols].copy()
+    display_df = display_df.sort_values('relevance_score', ascending=False)
+
+    st.dataframe(display_df, use_container_width=True, height=400)
+
+    # Download button
+    csv = display_df.to_csv(index=False)
+    st.download_button(
+        label="📥 Download Conversation Data (CSV)",
+        data=csv,
+        file_name=f"conversation_signals_{timestamp}.csv",
+        mime="text/csv",
     )
 
 

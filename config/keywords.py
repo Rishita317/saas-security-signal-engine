@@ -130,6 +130,50 @@ TOP_PUBLISHERS = {
     },
 }
 
+# Top Cybersecurity Companies (for blog/RSS monitoring)
+TOP_SECURITY_COMPANIES = {
+    "CrowdStrike": {
+        "url": "https://www.crowdstrike.com",
+        "blog_rss": "https://www.crowdstrike.com/blog/feed/",
+        "twitter": "@CrowdStrike",
+    },
+    "Palo Alto Networks": {
+        "url": "https://www.paloaltonetworks.com",
+        "blog_rss": "https://www.paloaltonetworks.com/blog/feed/",
+        "twitter": "@PaloAltoNtwks",
+    },
+    "Okta": {
+        "url": "https://www.okta.com",
+        "blog_rss": "https://www.okta.com/blog/feed/",
+        "twitter": "@Okta",
+    },
+    "Cloudflare": {
+        "url": "https://www.cloudflare.com",
+        "blog_rss": "https://blog.cloudflare.com/rss/",
+        "twitter": "@Cloudflare",
+    },
+    "Microsoft Security": {
+        "url": "https://www.microsoft.com/security",
+        "blog_rss": "https://www.microsoft.com/en-us/security/blog/feed/",
+        "twitter": "@MSSecurity",
+    },
+    "IBM Security": {
+        "url": "https://www.ibm.com/security",
+        "blog_rss": "https://securityintelligence.com/feed/",
+        "twitter": "@IBMSecurity",
+    },
+    "Cisco Security": {
+        "url": "https://www.cisco.com/c/en/us/products/security/index.html",
+        "blog_rss": "https://blogs.cisco.com/security/feed",
+        "twitter": "@CiscoSecurity",
+    },
+    "Broadcom (Symantec)": {
+        "url": "https://www.broadcom.com/products/cybersecurity",
+        "blog_rss": "https://symantec-enterprise-blogs.security.com/blogs/feed",
+        "twitter": "@Broadcom",
+    },
+}
+
 # Reddit subreddits to monitor
 TARGET_SUBREDDITS = [
     "netsec",
