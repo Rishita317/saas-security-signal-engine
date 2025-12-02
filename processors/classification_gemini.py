@@ -109,10 +109,18 @@ class JobClassifier:
                 job_data["company_name"] = result["validated_company"]
 
         except Exception as e:
-            print(f"⚠️  Classification error: {e}")
-            # Fall back to default scoring
-            job_data["relevance_score"] = 0.7
-            job_data["classification_confidence"] = "low"
+            error_msg = str(e)
+            # Check if it's a quota/rate limit error
+            if "429" in error_msg or "quota" in error_msg.lower() or "RESOURCE_EXHAUSTED" in error_msg:
+                print(f"⚠️  API quota exhausted. Falling back to mock classification.")
+                # Switch to mock mode for remaining jobs
+                self.use_mock = True
+                return self._mock_classify(job_data)
+            else:
+                print(f"⚠️  Classification error: {e}")
+                # Fall back to default scoring
+                job_data["relevance_score"] = 0.7
+                job_data["classification_confidence"] = "low"
 
         return job_data
 

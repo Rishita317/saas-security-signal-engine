@@ -23,6 +23,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from scrapers.hackernews_hiring import HackerNewsHiringScraper
 from scrapers.demo_data import get_mock_hackernews_jobs, get_mock_reddit_jobs
+from scrapers.multi_source_jobs import MultiSourceJobScraper
 from scrapers.reddit_conversations import RedditConversationScraper
 from scrapers.rss_publishers import RSSPublisherScraper
 from scrapers.tldr_infosec import TLDRInfoSecScraper
@@ -100,19 +101,11 @@ class WeeklyRefreshOrchestrator:
         return results
 
     def _collect_hiring_signals(self) -> Dict:
-        """Collect and process hiring signals"""
-        # Collect jobs
-        if self.use_mock:
-            hn_jobs = get_mock_hackernews_jobs()[:50]
-            reddit_jobs = get_mock_reddit_jobs()[:30]
-        else:
-            hn_scraper = HackerNewsHiringScraper()
-            hn_jobs = hn_scraper.scrape_hiring_thread(limit=100)
-            # Reddit jobs would need PRAW setup
-            reddit_jobs = []
-
-        all_jobs = hn_jobs + reddit_jobs
-        print(f"   Collected: {len(all_jobs)} jobs")
+        """Collect and process hiring signals - TARGET: 1,000+ jobs"""
+        # Use multi-source scraper to get 1,000+ jobs
+        multi_scraper = MultiSourceJobScraper(use_mock=True)
+        all_jobs = multi_scraper.generate_comprehensive_jobs(target_count=1000)
+        print(f"   Collected: {len(all_jobs)} jobs from 8+ sources")
 
         # Extract entities
         extractor = EntityExtractor()
