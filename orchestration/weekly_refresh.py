@@ -4,7 +4,7 @@ Weekly Automation Orchestrator
 Runs the complete SaaS Security Signal Engine pipeline weekly:
 1. Collect hiring signals (HackerNews + Reddit jobs)
 2. Collect conversation signals (Reddit + RSS + TLDR + Company blogs)
-3. Extract entities and classify with Gemini AI
+3. Extract entities and classify with OpenAI (GPT-4o-mini)
 4. Identify dynamic contributors and companies
 5. Generate actionable GTM reports
 6. Export to CSV for analysis
@@ -14,6 +14,7 @@ This is the CORE automation - data over UI polish.
 
 import os
 import json
+import csv
 from datetime import datetime, timedelta
 from typing import Dict, List
 import sys
