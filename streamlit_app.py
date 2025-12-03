@@ -41,6 +41,13 @@ st.markdown("""
         padding: 1rem;
         border-radius: 0.5rem;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        color: #000000;
+    }
+    .stMetric [data-testid="stMetricValue"] {
+        color: #000000 !important;
+    }
+    .stMetric [data-testid="stMetricLabel"] {
+        color: #000000 !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -400,9 +407,9 @@ def show_hiring_signals():
     st.markdown("---")
     st.markdown(
         """
-        <div style='text-align: center; color: #666; padding: 1rem;'>
+        <div style='text-align: center; color: #000000; padding: 1rem;'>
             <p>🔐 SaaS Security Signal Engine | Built for Obsidian Security AI GTM Engineer Role</p>
-            <p>Powered by Google Gemini, spaCy NLP, and Streamlit</p>
+            <p>Powered by OpenAI, spaCy NLP, and Streamlit</p>
         </div>
         """,
         unsafe_allow_html=True,

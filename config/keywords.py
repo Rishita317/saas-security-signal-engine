@@ -83,50 +83,45 @@ CONVERSATION_TOPICS = {
 
 # Top 10 Cybersecurity Publishers (with RSS feed URLs)
 TOP_PUBLISHERS = {
-    "Dark Reading": {
-        "url": "https://www.darkreading.com",
-        "rss": "https://www.darkreading.com/rss.xml",
+    "Microsoft Security": {
+        "url": "https://www.microsoft.com/security/blog",
+        "rss": "https://www.microsoft.com/security/blog/feed/",
     },
-    "BleepingComputer": {
-        "url": "https://www.bleepingcomputer.com",
-        "rss": "https://www.bleepingcomputer.com/feed/",
+    "IBM Security": {
+        "url": "https://securityintelligence.com",
+        "rss": "https://securityintelligence.com/feed/",
     },
-    "The Hacker News": {
-        "url": "https://thehackernews.com",
-        "rss": "https://feeds.feedburner.com/TheHackersNews",
+    "Palo Alto Networks": {
+        "url": "https://www.paloaltonetworks.com/blog",
+        "rss": "https://www.paloaltonetworks.com/blog/feed/",
     },
-    "SecurityWeek": {
-        "url": "https://www.securityweek.com",
-        "rss": "https://www.securityweek.com/feed/",
+    "CrowdStrike": {
+        "url": "https://www.crowdstrike.com/blog",
+        "rss": "https://www.crowdstrike.com/blog/feed/",
     },
-    "Threatpost": {
-        "url": "https://threatpost.com",
-        "rss": "https://threatpost.com/feed/",
+    "Cisco Security": {
+        "url": "https://blogs.cisco.com/security",
+        "rss": "https://blogs.cisco.com/security/feed",
     },
-    "Krebs on Security": {
-        "url": "https://krebsonsecurity.com",
-        "rss": "https://krebsonsecurity.com/feed/",
+    "TLDR Cybersecurity": {
+        "url": "https://www.cybersecuritytldr.com",
+        "rss": "https://www.cybersecuritytldr.com/feed/",
     },
-    "CSO Online": {
-        "url": "https://www.csoonline.com",
-        "rss": "https://www.csoonline.com/feed/",
+    "Fortinet": {
+        "url": "https://www.fortinet.com/blog",
+        "rss": "https://www.fortinet.com/blog/rss.xml",
     },
-    "Cyber Security Hub": {
-        "url": "https://www.cshub.com",
-        "rss": "https://www.cshub.com/rss/",
+    "Check Point Software": {
+        "url": "https://blog.checkpoint.com",
+        "rss": "https://blog.checkpoint.com/feed/",
     },
-    "Security Boulevard": {
-        "url": "https://securityboulevard.com",
-        "rss": "https://securityboulevard.com/feed/",
+    "Okta": {
+        "url": "https://www.okta.com/blog",
+        "rss": "https://www.okta.com/blog/feed/",
     },
-    "InfoSecurity Magazine": {
-        "url": "https://www.infosecurity-magazine.com",
-        "rss": "https://www.infosecurity-magazine.com/rss/news/",
-    },
-    "TLDR InfoSec": {
-        "url": "https://tldr.tech/infosec",
-        "rss": None,  # No public RSS - requires web scraping
-        "subscribers": "410,000+",
+    "Broadcom Security": {
+        "url": "https://www.broadcom.com/blog/security",
+        "rss": "https://www.broadcom.com/blog/feed",
     },
 }
 

@@ -424,6 +424,9 @@ class WeeklyRefreshOrchestrator:
 
             for job in jobs:
                 job_copy = job.copy()
+                # Map 'url' to 'source_url' for CSV export
+                if 'url' in job_copy and 'source_url' not in job_copy:
+                    job_copy['source_url'] = job_copy.get('url', '')
                 job_copy["matched_keywords"] = ", ".join(job.get("matched_keywords", []))
                 if isinstance(job.get("posted_date"), datetime):
                     job_copy["posted_date"] = job["posted_date"].strftime('%Y-%m-%d')
