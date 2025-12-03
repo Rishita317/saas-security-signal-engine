@@ -313,18 +313,34 @@ def show_hiring_signals():
         )
         display_df = display_df[mask]
 
-    # Format for display
+    # Format for display - include URL for hyperlinks if available
     display_cols = [
         'company_name', 'job_title', 'job_category',
         'location', 'relevance_score', 'source_platform', 'posted_date'
     ]
 
+    # Add URL column if it exists in the data (check both 'url' and 'source_url')
+    url_col = None
+    if 'source_url' in display_df.columns:
+        url_col = 'source_url'
+        display_cols.append('source_url')
+    elif 'url' in display_df.columns:
+        url_col = 'url'
+        display_cols.append('url')
+
     # Rename columns for better display
     display_df = display_df[display_cols].copy()
-    display_df.columns = [
-        'Company', 'Job Title', 'Category',
-        'Location', 'Relevance', 'Source', 'Posted Date'
-    ]
+
+    if url_col:
+        display_df.columns = [
+            'Company', 'Job Title', 'Category',
+            'Location', 'Relevance', 'Source', 'Posted Date', 'URL'
+        ]
+    else:
+        display_df.columns = [
+            'Company', 'Job Title', 'Category',
+            'Location', 'Relevance', 'Source', 'Posted Date'
+        ]
 
     # Format dates
     display_df['Posted Date'] = display_df['Posted Date'].dt.strftime('%Y-%m-%d')
@@ -332,11 +348,26 @@ def show_hiring_signals():
     # Sort by relevance
     display_df = display_df.sort_values('Relevance', ascending=False)
 
-    st.dataframe(
-        display_df,
-        use_container_width=True,
-        height=400,
-    )
+    # Display with clickable links if URL column exists
+    if 'URL' in display_df.columns:
+        st.dataframe(
+            display_df,
+            use_container_width=True,
+            height=400,
+            column_config={
+                "URL": st.column_config.LinkColumn(
+                    "Job Posting",
+                    help="Click to view the job posting",
+                    display_text="View Job"
+                )
+            }
+        )
+    else:
+        st.dataframe(
+            display_df,
+            use_container_width=True,
+            height=400,
+        )
 
     # Download button
     st.download_button(

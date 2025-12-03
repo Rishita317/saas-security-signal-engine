@@ -1,7 +1,7 @@
 """
-Conversation Classification Module with Google Gemini Support
+Conversation Classification Module using OpenAI
 
-Uses Google Gemini (FREE) or GPT-4 Mini to:
+Uses OpenAI GPT-4o-mini to:
 1. Score relevance of conversations/articles to SaaS security (0.0 to 1.0)
 2. Identify key contributors/authors
 3. Detect trending topics
@@ -28,9 +28,9 @@ load_dotenv()
 
 
 class ConversationClassifier:
-    """Classify conversations and articles using Google Gemini or GPT-4 Mini"""
+    """Classify conversations and articles using OpenAI GPT-4o-mini"""
 
-    def __init__(self, api_key: Optional[str] = None, use_mock: bool = False, provider: str = "auto"):
+    def __init__(self, api_key: Optional[str] = None, use_mock: bool = False, provider: str = "openai"):
         """
         Initialize classifier
 
@@ -47,21 +47,7 @@ class ConversationClassifier:
             print("🎭 Using mock classification (no API calls)")
             return
 
-        # Try Gemini first (FREE)
-        if provider in ["gemini", "auto"]:
-            gemini_key = api_key or os.getenv("GOOGLE_API_KEY")
-            if gemini_key:
-                try:
-                    import google.generativeai as genai
-                    genai.configure(api_key=gemini_key)
-                    self.client = genai.GenerativeModel('gemini-2.5-flash')
-                    self.provider = "gemini"
-                    print("✅ Google Gemini 2.5 Flash initialized (FREE tier)")
-                    return
-                except Exception as e:
-                    print(f"⚠️  Gemini initialization failed: {e}")
-
-        # Fallback to OpenAI
+        # Initialize OpenAI (default provider)
         if provider in ["openai", "auto"]:
             openai_key = api_key or os.getenv("OPENAI_API_KEY")
             if openai_key and not openai_key.startswith("sk-your"):
@@ -95,10 +81,7 @@ class ConversationClassifier:
         prompt = self._build_classification_prompt(conversation_data)
 
         try:
-            if self.provider == "gemini":
-                result = self._classify_with_gemini(prompt)
-            else:  # openai
-                result = self._classify_with_openai(prompt)
+            result = self._classify_with_openai(prompt)
 
             # Update conversation data
             conversation_data["relevance_score"] = float(result.get("relevance_score", 0.5))
@@ -115,17 +98,7 @@ class ConversationClassifier:
 
         return conversation_data
 
-    def _classify_with_gemini(self, prompt: str) -> Dict:
-        """Classify using Google Gemini"""
-        response = self.client.generate_content(prompt)
-        text = response.text
-
-        # Extract JSON from response
-        json_match = re.search(r'\{[^{}]*\}', text, re.DOTALL)
-        if json_match:
-            return json.loads(json_match.group())
-
-        return json.loads(text)
+    # Removed Gemini integration; classification uses OpenAI by default.
 
     def _classify_with_openai(self, prompt: str) -> Dict:
         """Classify using OpenAI GPT-4 Mini"""

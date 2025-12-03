@@ -3,12 +3,14 @@ name: Weekly Data Refresh
 # Run every Monday at 8 AM UTC (midnight PST)
 on:
   schedule:
-    - cron: '0 8 * * 1'  # Every Monday at 8 AM UTC
-  workflow_dispatch:  # Allow manual trigger
+    - cron: "0 8 * * 1" # Every Monday at 8 AM UTC
+  workflow_dispatch: # Allow manual trigger
 
 jobs:
   refresh-data:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Allow pushing commits
 
     steps:
       - name: Checkout repository
@@ -19,7 +21,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install dependencies
         run: |
@@ -29,11 +31,10 @@ jobs:
 
       - name: Run weekly refresh
         env:
-          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
           REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
-          REDDIT_USER_AGENT: 'SaaS-Security-Signal-Engine/1.0'
+          REDDIT_USER_AGENT: "SaaS-Security-Signal-Engine/1.0"
         run: |
           python orchestration/weekly_refresh.py
 

@@ -1,5 +1,5 @@
 """
-End-to-End Pipeline Test with Google Gemini
+End-to-End Pipeline Test with OpenAI
 
 Tests the complete hiring signal pipeline with FREE Gemini AI:
 1. Data collection (mock data)
@@ -7,7 +7,7 @@ Tests the complete hiring signal pipeline with FREE Gemini AI:
 3. Classification (Google Gemini 2.5 Flash - FREE!)
 4. Filtering and export
 
-This demonstrates real AI classification at ZERO cost.
+This demonstrates real AI classification using OpenAI GPT-4o-mini.
 """
 
 import json
@@ -26,7 +26,7 @@ def run_pipeline_with_gemini(num_jobs: int = 30, export_csv: bool = True):
         export_csv: Whether to export results to CSV
     """
     print("\n" + "=" * 70)
-    print("🚀 SAAS SECURITY SIGNAL ENGINE - GEMINI AI PIPELINE")
+    print("🚀 SAAS SECURITY SIGNAL ENGINE - OpenAI GPT-4o-mini PIPELINE")
     print("=" * 70 + "\n")
 
     # Step 1: Data Collection
@@ -49,7 +49,7 @@ def run_pipeline_with_gemini(num_jobs: int = 30, export_csv: bool = True):
     print(f"   Unique companies: {stats['unique_companies']}\n")
 
     # Step 3: Classification with Gemini
-    print("🤖 STEP 3: Relevance Classification (Google Gemini - FREE)")
+    print("🤖 STEP 3: Relevance Classification (OpenAI GPT-4o-mini)")
     print("-" * 70)
     classifier = JobClassifier()  # Will use Gemini automatically
     classified_jobs = classifier.batch_classify(jobs_with_entities)
@@ -100,7 +100,7 @@ def run_pipeline_with_gemini(num_jobs: int = 30, export_csv: bool = True):
 
     # Step 6: Export (optional)
     if export_csv:
-        export_to_csv(relevant_jobs, suffix="_gemini")
+        export_to_csv(relevant_jobs, suffix="_openai")
 
     print("\n" + "=" * 70)
 
@@ -176,7 +176,7 @@ def main():
         print(f"   Posted: {job.get('posted_date').strftime('%Y-%m-%d')}")
 
     print("\n" + "=" * 70)
-    print("🎉 Gemini pipeline test complete! FREE AI classification working!")
+    print("🎉 OpenAI pipeline test complete! AI classification working!")
     print("=" * 70 + "\n")
 
 

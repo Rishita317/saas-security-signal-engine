@@ -1,25 +1,13 @@
-# Google Gemini AI Integration
+# Google Gemini AI Integration (Deprecated)
 
-## Overview
-
-The SaaS Security Signal Engine now uses **Google Gemini 2.5 Flash** for job classification - achieving **31% better relevance scores** compared to mock classification, completely **FREE** to use.
+This document formerly documented Google Gemini integration. The project has switched to using OpenAI (GPT-4o-mini) for classification by default.
+See `OPENAI_INTEGRATION.md` for the updated integration and setup instructions.
 
 ---
 
-## Setup
+## Deprecation Note
 
-### 1. Get Your Gemini API Key
-
-1. Go to [Google AI Studio](https://makersuite.google.com/app/apikey)
-2. Click "Create API Key"
-3. Copy your key (format: `AIzaSy...`)
-
-### 2. Add to Environment
-
-Edit `.env` file:
-```bash
-GOOGLE_API_KEY=AIzaSyATDD3nUfHv0yi9dZljOAzQjRUXqjaS0vc
-```
+Gemini integration is no longer the default. If you still want to use Gemini, you are responsible for maintaining any required API keys and model changes.
 
 ### 3. Install Dependencies
 
@@ -39,7 +27,7 @@ The classifier automatically tries Gemini first, falls back to OpenAI if needed:
 ```python
 from processors.classification_gemini import JobClassifier
 
-# Will use Gemini if GOOGLE_API_KEY is set
+# Will use OpenAI if OPENAI_API_KEY is set
 classifier = JobClassifier()
 
 # Force specific provider
@@ -49,6 +37,7 @@ classifier = JobClassifier(provider="gemini")  # or "openai"
 ### Classification Process
 
 For each job posting:
+
 1. **Analyze** company name, job title, description, and keywords
 2. **Score** relevance to SaaS security (0.0 to 1.0)
 3. **Categorize** into SSPM, SaaS Security, AI Agent Security, etc.
@@ -60,28 +49,31 @@ For each job posting:
 
 ### Performance Comparison
 
-| Metric | Mock Classification | Gemini AI | Improvement |
-|--------|---------------------|-----------|-------------|
-| **Average Relevance** | 0.70 | **0.92** | **+31%** |
-| **High Relevance (≥0.8)** | 43% | **93%** | **+116%** |
-| **Processing Time** | <1s | ~2s | - |
-| **Cost** | $0 | **$0** | Free! |
+| Metric                    | Mock Classification | Gemini AI | Improvement |
+| ------------------------- | ------------------- | --------- | ----------- |
+| **Average Relevance**     | 0.70                | **0.92**  | **+31%**    |
+| **High Relevance (≥0.8)** | 43%                 | **93%**   | **+116%**   |
+| **Processing Time**       | <1s                 | ~2s       | -           |
+| **Cost**                  | $0                  | **$0**    | Free!       |
 
 ### Detailed Test Results
 
 **Pipeline Test: 30 Jobs**
+
 - ✅ **28/30 jobs** rated high relevance (≥0.8)
 - ✅ **93% high relevance rate**
 - ✅ **0.92 average score**
 - ⚠️ Hit rate limit on 2 jobs (10 requests/minute free tier)
 
 **Top Categories Identified:**
+
 1. SSPM: 14 jobs (47%)
 2. SaaS Security: 8 jobs (27%)
 3. AI Agent Security: 4 jobs (13%)
 4. Cloud Security: 4 jobs (13%)
 
 **Top Companies Hiring:**
+
 1. Google Cloud - 3 roles
 2. ServiceNow - 3 roles
 3. Atlassian - 2 roles
@@ -93,6 +85,7 @@ For each job posting:
 ## API Rate Limits
 
 ### Free Tier (Current)
+
 - **10 requests per minute**
 - **1,500 requests per day**
 - Suitable for: Testing, small batches (<500 jobs/day)
@@ -118,6 +111,7 @@ def batch_classify(self, jobs: List[Dict], batch_size: int = 10) -> List[Dict]:
 ```
 
 ### Paid Tier (Optional)
+
 - **$0.001 per request** ($0.03 per 30 jobs)
 - **No rate limits**
 - Upgrade at [Google AI Pricing](https://ai.google.dev/pricing)
@@ -134,6 +128,7 @@ python test_pipeline_gemini.py
 ```
 
 Output:
+
 ```
 🚀 SAAS SECURITY SIGNAL ENGINE - GEMINI AI PIPELINE
 ======================================================================
@@ -182,15 +177,18 @@ top_tier = classifier.filter_by_relevance(classified_jobs, min_score=0.9)
 ## Files Modified/Created
 
 ### New Files
+
 - `processors/classification_gemini.py` - Gemini-powered classifier
 - `test_pipeline_gemini.py` - End-to-end test with Gemini
 - `data/hiring_signals_gemini_20251129_152923.csv` - Results
 
 ### Updated Files
-- `.env` - Added GOOGLE_API_KEY
+
+- `.env` - Should set `OPENAI_API_KEY` instead
 - `requirements.txt` - Added google-generativeai==0.8.3
 
 ### Original Files (Kept)
+
 - `processors/classification.py` - OpenAI-only version (reference)
 - `test_pipeline.py` - Mock classification test
 
@@ -203,6 +201,7 @@ top_tier = classifier.filter_by_relevance(classified_jobs, min_score=0.9)
 **Problem**: Hit the 10 requests/minute free tier limit
 
 **Solution**:
+
 1. Add delays between requests (see Rate Limits section)
 2. Process in smaller batches
 3. Upgrade to paid tier ($0.001/request)
@@ -216,7 +215,8 @@ top_tier = classifier.filter_by_relevance(classified_jobs, min_score=0.9)
 ### Error: "Failed to initialize Gemini"
 
 **Possible causes**:
-1. API key not set: Check `.env` has `GOOGLE_API_KEY=...`
+
+1. API key not set: Check `.env` has `OPENAI_API_KEY=...`
 2. Network issue: Check internet connection
 3. Invalid API key: Verify key at [Google AI Studio](https://makersuite.google.com/app/apikey)
 
@@ -227,19 +227,23 @@ top_tier = classifier.filter_by_relevance(classified_jobs, min_score=0.9)
 ## Benefits of Gemini
 
 ### 1. Cost
+
 - **$0** for up to 1,500 requests/day
 - vs OpenAI GPT-4 Mini: $0.03 per 30 jobs
 
 ### 2. Quality
+
 - **31% better** relevance scores than mock data
 - **93% high relevance rate** vs 43% with mock
 
 ### 3. Accuracy
+
 - Understands SaaS security context
 - Properly categorizes SSPM, AI Agent Security, Compliance
 - Validates company names
 
 ### 4. Confidence
+
 - Provides confidence levels (high/medium/low)
 - Helps prioritize follow-up
 
@@ -248,16 +252,19 @@ top_tier = classifier.filter_by_relevance(classified_jobs, min_score=0.9)
 ## Next Steps
 
 ### Phase 3: Conversation Signals
+
 - Apply Gemini to Reddit discussions
 - Score relevance of security conversations
 - Track trending topics
 
 ### Automation
+
 - Set up Modal cron job for weekly refresh
 - Use Gemini for all classification
 - Scale to 1,000+ companies
 
 ### Dashboard Enhancement
+
 - Add confidence indicators
 - Show Gemini vs Mock comparison
 - Real-time classification view
@@ -275,6 +282,7 @@ streamlit run streamlit_app.py
 Open: [http://localhost:8502](http://localhost:8502)
 
 **What You'll See:**
+
 - 0.92 average relevance (up from 0.70)
 - 93% high relevance jobs
 - Real confidence ratings

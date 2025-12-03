@@ -9,6 +9,7 @@ This guide explains how to set up **automatic weekly data refresh** for the SaaS
 ### Option 1: GitHub Actions (Recommended - FREE)
 
 **Pros:**
+
 - Completely free for public repos
 - Automatically commits new data to repo
 - Runs every Monday at 8 AM UTC
@@ -18,6 +19,7 @@ This guide explains how to set up **automatic weekly data refresh** for the SaaS
 **Setup Steps:**
 
 1. **Push Code to GitHub**
+
    ```bash
    cd /Users/rishitameharishi/Documents/Sass_Security_Engine\(SSE\)
    git add .
@@ -30,8 +32,8 @@ This guide explains how to set up **automatic weekly data refresh** for the SaaS
    Go to your GitHub repo → Settings → Secrets and variables → Actions → New repository secret
 
    Add these secrets:
-   - `GOOGLE_API_KEY` = `AIzaSyBbpHNph-ZfeEoDFeV-3bFLnbvo3FU8r6g`
-   - `OPENAI_API_KEY` = (optional - your OpenAI key if you have one)
+
+   - `OPENAI_API_KEY` = (your OpenAI API key)
    - `REDDIT_CLIENT_ID` = (your Reddit client ID when you get one)
    - `REDDIT_CLIENT_SECRET` = (your Reddit secret when you get one)
 
@@ -54,6 +56,7 @@ This guide explains how to set up **automatic weekly data refresh** for the SaaS
 ### Option 2: Cron Job (Local/Server)
 
 **Pros:**
+
 - Runs on your local machine or server
 - No GitHub dependency
 - Good for private data
@@ -61,6 +64,7 @@ This guide explains how to set up **automatic weekly data refresh** for the SaaS
 **Setup:**
 
 1. **Create cron script**
+
    ```bash
    # Edit crontab
    crontab -e
@@ -70,6 +74,7 @@ This guide explains how to set up **automatic weekly data refresh** for the SaaS
    ```
 
 2. **Create logs directory**
+
    ```bash
    mkdir -p logs
    ```
@@ -86,6 +91,7 @@ This guide explains how to set up **automatic weekly data refresh** for the SaaS
 ### Option 3: Modal Cron (Cloud - Paid)
 
 **Pros:**
+
 - Serverless, no infrastructure
 - Scales automatically
 - Pay-per-use
@@ -95,6 +101,7 @@ This guide explains how to set up **automatic weekly data refresh** for the SaaS
 **Setup:**
 
 1. **Install Modal**
+
    ```bash
    pip install modal
    modal token new
@@ -114,12 +121,14 @@ This guide explains how to set up **automatic weekly data refresh** for the SaaS
 The automation runs `orchestration/weekly_refresh.py` which:
 
 1. **Collects Hiring Signals**
+
    - Scrapes HackerNews "Who's Hiring" (80+ jobs)
    - Extracts companies, job titles, locations
-   - Classifies relevance with Gemini AI
+   - Classifies relevance with OpenAI GPT-4o-mini
    - Identifies top 20 companies hiring
 
 2. **Collects Conversation Signals**
+
    - Scrapes Reddit discussions (50+ conversations)
    - Aggregates RSS articles (220+ articles)
    - Fetches TLDR InfoSec newsletter
@@ -128,11 +137,13 @@ The automation runs `orchestration/weekly_refresh.py` which:
    - Identifies top 15 publishers
 
 3. **Generates GTM Insights**
+
    - Companies hiring AND discussed (hottest targets)
    - Companies only hiring (cold outreach)
    - Companies only discussed (brand awareness)
 
 4. **Exports Data**
+
    - Creates weekly folder: `data/weekly/2025_W47/`
    - Exports 6 CSV files:
      - `hiring_signals.csv` - All job postings
@@ -159,6 +170,7 @@ python orchestration/weekly_refresh.py
 ```
 
 **Expected Output:**
+
 ```
 ======================================================================
 🔐 SAAS SECURITY SIGNAL ENGINE - WEEKLY REFRESH
@@ -169,7 +181,7 @@ Timestamp: 2025-11-29_153045
 📥 PHASE 1: Hiring Signal Collection
 ----------------------------------------------------------------------
 ✅ Reddit: 80 job postings
-🤖 Classifying 80 jobs with Google Gemini...
+🤖 Classifying 80 jobs with OpenAI GPT-4o-mini...
 ✅ Classification complete!
 🔍 Filtered: 72/80 jobs above 0.7 relevance score
 
@@ -179,7 +191,7 @@ Timestamp: 2025-11-29_153045
 ✅ RSS: 220 articles
 ✅ TLDR InfoSec: 8 articles
 📊 Total collected: 278 items
-🤖 Classifying 278 conversations with Google Gemini...
+🤖 Classifying 278 conversations with OpenAI GPT-4o-mini...
 
 🎯 PHASE 3: GTM Intelligence Generation
 ----------------------------------------------------------------------
@@ -215,19 +227,20 @@ cat data/weekly/2025_W48/gtm_insights.csv
 
 ### Issue 1: Rate Limiting
 
-**Error:** `429 Too Many Requests` from Gemini API
+**Error:** `429 Too Many Requests` from the OpenAI API
 
 **Solution:**
-- Free tier: 10 requests/minute
-- The script handles this automatically
-- Adds delays between batches
-- For large datasets, upgrade to paid tier ($0.001/request)
+
+- Add delays between requests/batches to avoid hitting rate limits
+- Reduce batch sizes or process in smaller groups
+- Check OpenAI usage limits and upgrade or request quota increase if needed
 
 ### Issue 2: No Data Collected
 
 **Error:** `0 job postings found`
 
 **Solution:**
+
 - Check if it's the first Monday of the month (HackerNews posts monthly)
 - System uses mock data as fallback
 - Real scraping requires API keys (Reddit)
@@ -237,13 +250,14 @@ cat data/weekly/2025_W48/gtm_insights.csv
 **Error:** `403 Your API key was reported as leaked`
 
 **Solution:**
-- Generate new key at https://aistudio.google.com/apikey
-- Update `.env` file with new key
-- Or update GitHub Secret `GOOGLE_API_KEY`
+
+- Generate new key from your OpenAI account: https://platform.openai.com/account/api-keys
+- Update `.env` file with your new key locally, or set `OPENAI_API_KEY` in your GitHub repo secrets
 
 ### Issue 4: GitHub Actions Not Running
 
 **Solution:**
+
 - Check Actions tab → Enable workflows
 - Verify secrets are set correctly
 - Try manual trigger first: Actions → Run workflow
@@ -255,11 +269,13 @@ cat data/weekly/2025_W48/gtm_insights.csv
 ### Check Last Run
 
 **GitHub Actions:**
+
 - Go to Actions tab
 - Click on "Weekly Data Refresh"
 - View latest run logs
 
 **Local Cron:**
+
 ```bash
 tail -f logs/cron.log
 ```
@@ -287,21 +303,25 @@ print(set(df2['company']) - set(df1['company']))
 After automation is set up:
 
 1. **Verify First Run**
+
    - Wait for Monday or trigger manually
    - Check data/weekly/ folder for new data
    - View dashboard to confirm data loads
 
 2. **Set Up Alerts** (Optional)
+
    - Email digest of hot companies
    - Slack notification for breaking breaches
    - Weekly summary report
 
 3. **Add More Data Sources**
+
    - Twitter/X via Apify
    - LinkedIn company posts
    - Company blogs (Okta, Cloudflare, etc.)
 
 4. **Database Integration**
+
    - Store in Supabase for historical tracking
    - Query trends over time
    - Build advanced analytics
