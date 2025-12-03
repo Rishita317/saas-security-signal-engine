@@ -424,12 +424,21 @@ class WeeklyRefreshOrchestrator:
 
             for job in jobs:
                 job_copy = job.copy()
-                # Map 'url' to 'source_url' for CSV export
+                # Map field names for CSV export
                 if 'url' in job_copy and 'source_url' not in job_copy:
                     job_copy['source_url'] = job_copy.get('url', '')
+                if 'title' in job_copy and 'job_title' not in job_copy:
+                    job_copy['job_title'] = job_copy.get('title', '')
+                if 'source' in job_copy and 'source_platform' not in job_copy:
+                    job_copy['source_platform'] = job_copy.get('source', '')
+                if 'category' in job_copy and 'job_category' not in job_copy:
+                    job_copy['job_category'] = job_copy.get('category', '')
+                if 'posted_at' in job_copy and 'posted_date' not in job_copy:
+                    job_copy['posted_date'] = job_copy.get('posted_at')
+
                 job_copy["matched_keywords"] = ", ".join(job.get("matched_keywords", []))
-                if isinstance(job.get("posted_date"), datetime):
-                    job_copy["posted_date"] = job["posted_date"].strftime('%Y-%m-%d')
+                if isinstance(job_copy.get("posted_date"), datetime):
+                    job_copy["posted_date"] = job_copy["posted_date"].strftime('%Y-%m-%d')
                 writer.writerow(job_copy)
 
     def _write_conversations_csv(self, conversations: List[Dict], filename: str):

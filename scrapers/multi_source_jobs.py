@@ -85,8 +85,25 @@ class MultiSourceJobScraper:
             # Energy
             "ExxonMobil", "Chevron", "Shell", "BP", "ConocoPhillips",
 
-            # Startups (50-200 employees)
-        ] + [f"Startup{i}" for i in range(1, 401)]  # 400 startups
+            # More Cybersecurity & SaaS Companies
+            "Datadog", "HashiCorp", "Auth0", "Duo Security", "Varonis",
+            "Netskope", "Abnormal Security", "Arctic Wolf", "Cybereason", "Darktrace",
+            "Splunk", "Sumo Logic", "Elastic", "New Relic", "PagerDuty",
+            "Twilio", "SendGrid", "Segment", "Amplitude", "Mixpanel",
+            "GitHub", "GitLab", "Bitbucket", "CircleCI", "Jenkins",
+            "Docker", "Kubernetes", "Red Hat", "SUSE", "Canonical",
+            "Databricks", "Snowflake", "Confluent", "MongoDB", "Redis",
+            "Akamai", "Fastly", "Cloudinary", "Twilio", "Vonage",
+            "Zoom Video", "RingCentral", "8x8", "Five9", "Genesys",
+            "Freshworks", "Intercom", "Drift", "Gong", "Chorus.ai",
+            "UiPath", "Automation Anywhere", "Blue Prism", "WorkFusion", "Kryon",
+            "Tanium", "Carbon Black", "Cylance", "Sophos", "Bitdefender",
+            "F5 Networks", "A10 Networks", "Radware", "Imperva", "Barracuda",
+            "Mimecast", "Proofpoint", "Abnormal Security", "Area 1", "IronScales",
+            "SailPoint", "CyberArk", "BeyondTrust", "Centrify", "Thycotic",
+            "Rubrik", "Cohesity", "Veeam", "Commvault", "Druva",
+            "Armis", "Claroty", "Nozomi Networks", "Forescout", "ForeScout",
+        ]
 
         self.job_titles = [
             # Security Engineer titles
