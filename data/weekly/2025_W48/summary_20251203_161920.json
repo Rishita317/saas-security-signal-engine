@@ -1,0 +1,134 @@
+{
+  "week_id": "2025_W48",
+  "timestamp": "20251203_161920",
+  "companies_discovered": 55,
+  "jobs_collected": 50,
+  "posts_collected": 16,
+  "breakdown": {
+    "high_priority": 0,
+    "hiring_only": 50,
+    "talking_only": 5
+  },
+  "top_companies": [
+    {
+      "name": "GoodRx",
+      "priority": 2,
+      "roles": 1,
+      "posts": 0
+    },
+    {
+      "name": "Delve",
+      "priority": 2,
+      "roles": 1,
+      "posts": 0
+    },
+    {
+      "name": "Applied Intuition",
+      "priority": 2,
+      "roles": 1,
+      "posts": 0
+    },
+    {
+      "name": "Hive",
+      "priority": 2,
+      "roles": 1,
+      "posts": 0
+    },
+    {
+      "name": "Owner",
+      "priority": 2,
+      "roles": 1,
+      "posts": 0
+    },
+    {
+      "name": "Lockheed Martin",
+      "priority": 2,
+      "roles": 1,
+      "posts": 0
+    },
+    {
+      "name": "Sciens Building Solutions",
+      "priority": 2,
+      "roles": 1,
+      "posts": 0
+    },
+    {
+      "name": "Saildrone",
+      "priority": 2,
+      "roles": 1,
+      "posts": 0
+    },
+    {
+      "name": "Sendbird",
+      "priority": 2,
+      "roles": 1,
+      "posts": 0
+    },
+    {
+      "name": "Airtable",
+      "priority": 2,
+      "roles": 1,
+      "posts": 0
+    },
+    {
+      "name": "Anomali",
+      "priority": 2,
+      "roles": 1,
+      "posts": 0
+    },
+    {
+      "name": "xAI",
+      "priority": 2,
+      "roles": 1,
+      "posts": 0
+    },
+    {
+      "name": "Rule4",
+      "priority": 2,
+      "roles": 1,
+      "posts": 0
+    },
+    {
+      "name": "Virtana",
+      "priority": 2,
+      "roles": 1,
+      "posts": 0
+    },
+    {
+      "name": "Integra Connect",
+      "priority": 2,
+      "roles": 1,
+      "posts": 0
+    },
+    {
+      "name": "Netflix",
+      "priority": 2,
+      "roles": 1,
+      "posts": 0
+    },
+    {
+      "name": "TikTok",
+      "priority": 2,
+      "roles": 1,
+      "posts": 0
+    },
+    {
+      "name": "1Fivetech",
+      "priority": 2,
+      "roles": 1,
+      "posts": 0
+    },
+    {
+      "name": "NuHarbor Security",
+      "priority": 2,
+      "roles": 1,
+      "posts": 0
+    },
+    {
+      "name": "Happy Returns",
+      "priority": 2,
+      "roles": 1,
+      "posts": 0
+    }
+  ]
+}

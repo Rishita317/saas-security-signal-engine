@@ -1,0 +1,134 @@
+{
+  "week_id": "2025_W48",
+  "timestamp": "20251203_204921",
+  "companies_discovered": 174,
+  "jobs_collected": 171,
+  "posts_collected": 16,
+  "breakdown": {
+    "high_priority": 2,
+    "hiring_only": 169,
+    "talking_only": 3
+  },
+  "top_companies": [
+    {
+      "name": "CrowdStrike",
+      "priority": 3,
+      "roles": 1,
+      "posts": 5
+    },
+    {
+      "name": "Palo Alto Networks",
+      "priority": 3,
+      "roles": 1,
+      "posts": 3
+    },
+    {
+      "name": "GoodRx",
+      "priority": 2,
+      "roles": 1,
+      "posts": 0
+    },
+    {
+      "name": "Delve",
+      "priority": 2,
+      "roles": 1,
+      "posts": 0
+    },
+    {
+      "name": "Hive",
+      "priority": 2,
+      "roles": 1,
+      "posts": 0
+    },
+    {
+      "name": "Owner",
+      "priority": 2,
+      "roles": 1,
+      "posts": 0
+    },
+    {
+      "name": "Meta",
+      "priority": 2,
+      "roles": 1,
+      "posts": 0
+    },
+    {
+      "name": "Gallup",
+      "priority": 2,
+      "roles": 1,
+      "posts": 0
+    },
+    {
+      "name": "Patelco Credit Union",
+      "priority": 2,
+      "roles": 1,
+      "posts": 0
+    },
+    {
+      "name": "Saildrone",
+      "priority": 2,
+      "roles": 1,
+      "posts": 0
+    },
+    {
+      "name": "Sendbird",
+      "priority": 2,
+      "roles": 1,
+      "posts": 0
+    },
+    {
+      "name": "Airtable",
+      "priority": 2,
+      "roles": 1,
+      "posts": 0
+    },
+    {
+      "name": "Anomali",
+      "priority": 2,
+      "roles": 1,
+      "posts": 0
+    },
+    {
+      "name": "Zone 5 Technologies",
+      "priority": 2,
+      "roles": 1,
+      "posts": 0
+    },
+    {
+      "name": "Rule4",
+      "priority": 2,
+      "roles": 1,
+      "posts": 0
+    },
+    {
+      "name": "Virtana",
+      "priority": 2,
+      "roles": 1,
+      "posts": 0
+    },
+    {
+      "name": "Integra Connect",
+      "priority": 2,
+      "roles": 1,
+      "posts": 0
+    },
+    {
+      "name": "Netflix",
+      "priority": 2,
+      "roles": 1,
+      "posts": 0
+    },
+    {
+      "name": "TikTok",
+      "priority": 2,
+      "roles": 1,
+      "posts": 0
+    },
+    {
+      "name": "NuHarbor Security",
+      "priority": 2,
+      "roles": 1,
+      "posts": 0
+    }
+  ]
+}
