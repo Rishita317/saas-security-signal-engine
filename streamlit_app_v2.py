@@ -5,6 +5,8 @@ NEW APPROACH:
 - Focus on COMPANIES (not individual jobs)
 - 3 Tabs: Company Tracker, Hiring Signals, Conversation Signals
 - Priority scoring: Both (3) > Hiring Only (2) > Talking Only (1)
+
+Last Updated: December 5, 2025 - Fresh data from automated weekly refresh
 """
 
 import streamlit as st
