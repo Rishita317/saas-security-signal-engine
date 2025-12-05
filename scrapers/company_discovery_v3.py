@@ -17,6 +17,7 @@ from datetime import datetime
 import time
 from typing import List, Dict, Set
 import re
+from urllib.parse import urljoin
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
@@ -317,30 +318,65 @@ class CompanyDiscoveryV3:
                         if len(discovered) >= max_companies:
                             break
 
+                        # Multiple strategies to extract company name (robust for headless mode)
+                        company_name = None
+
+                        # Strategy 1: Try data-testid attribute
                         company_elem = card.find('span', {'data-testid': 'company-name'})
-                        title_elem = card.find('h2', class_='jobTitle')
-                        link_elem = card.find('a', class_='jcs-JobTitle')
-
-                        if company_elem and title_elem:
+                        if company_elem:
                             company_name = self._clean_company_name(company_elem.text.strip())
-                            job_title = title_elem.text.strip()
-                            job_url = f"https://www.indeed.com{link_elem['href']}" if link_elem and 'href' in link_elem.attrs else f"https://www.indeed.com/jobs?q={search_term}"
 
-                            if company_name and company_name not in discovered:
-                                discovered.add(company_name)
+                        # Strategy 2: Try class containing 'company'
+                        if not company_name:
+                            company_elem = card.find(['span', 'div'], class_=re.compile(r'company', re.I))
+                            if company_elem:
+                                company_name = self._clean_company_name(company_elem.text.strip())
 
-                                if company_name not in self.companies:
-                                    self.companies[company_name] = {'hiring': [], 'conversations': []}
+                        # Strategy 3: Try attribute containing 'company'
+                        if not company_name:
+                            company_elem = card.find(['span', 'div'], attrs={'data-company-name': True})
+                            if company_elem:
+                                company_name = self._clean_company_name(company_elem.get('data-company-name', ''))
 
-                                self.companies[company_name]['hiring'].append({
-                                    'title': job_title,
-                                    'source': 'Indeed',
-                                    'url': job_url,
-                                    'location': 'Various'
-                                })
+                        # Strategy 4: Look for text after "at" or "by" (fallback)
+                        if not company_name:
+                            card_text = card.get_text()
+                            match = re.search(r'(?:at|by)\s+([A-Z][A-Za-z0-9\s\.\-&]{2,50})', card_text)
+                            if match:
+                                company_name = self._clean_company_name(match.group(1))
 
-                                if len(discovered) % 25 == 0:
-                                    print(f"      ✅ Found: {len(discovered)} companies so far...")
+                        # Get job title
+                        title_elem = card.find('h2', class_='jobTitle')
+                        if not title_elem:
+                            title_elem = card.find(['h2', 'h3', 'a'], class_=re.compile(r'title', re.I))
+
+                        # Get job URL
+                        link_elem = card.find('a', class_='jcs-JobTitle')
+                        if not link_elem:
+                            link_elem = card.find('a', href=re.compile(r'/rc/clk|/viewjob'))
+
+                        # Validate and add company
+                        if company_name and title_elem:
+                            # Filter out invalid company names (UI elements, etc.)
+                            if self._is_valid_company_name(company_name):
+                                if company_name not in discovered:
+                                    discovered.add(company_name)
+
+                                    if company_name not in self.companies:
+                                        self.companies[company_name] = {'hiring': [], 'conversations': []}
+
+                                    job_title = title_elem.text.strip()
+                                    job_url = f"https://www.indeed.com{link_elem['href']}" if link_elem and 'href' in link_elem.attrs else f"https://www.indeed.com/jobs?q={search_term}"
+
+                                    self.companies[company_name]['hiring'].append({
+                                        'title': job_title,
+                                        'source': 'Indeed',
+                                        'url': job_url,
+                                        'location': 'Various'
+                                    })
+
+                                    if len(discovered) % 25 == 0:
+                                        print(f"      ✅ Found: {len(discovered)} companies so far...")
 
                     self._close_selenium_driver()
                     time.sleep(3)
@@ -1141,6 +1177,55 @@ class CompanyDiscoveryV3:
                 continue
 
         print(f"\n📊 Total quality posts discovered: {posts_collected}")
+
+    def _is_valid_company_name(self, name: str) -> bool:
+        """
+        Validate that extracted text is actually a company name, not UI elements
+
+        Filters out:
+        - HTML fragments (e.g., "e account", "sign inorcreate")
+        - Navigation elements
+        - Generic text
+        """
+        if not name or len(name) < 2:
+            return False
+
+        # Must be reasonable length (2-100 chars)
+        if len(name) > 100:
+            return False
+
+        # Filter out UI text fragments
+        invalid_patterns = [
+            r'\btosign\b', r'\binorcreate\b', r'\baccount\b.*\bsave\b',
+            r'^e\s', r'need\s*to', r'sign\s*in', r'create\s*an',
+            r'POST\s*A\s*JOB', r'apply\s*for', r'maximum\s*exposure',
+            r'Hiring\s*Companies', r'Latest\s*News', r'Why\s*choose',
+            r'need.*account', r'You\s*need', r'Apply$'
+        ]
+
+        for pattern in invalid_patterns:
+            if re.search(pattern, name, re.IGNORECASE):
+                return False
+
+        # Must contain at least one letter
+        if not re.search(r'[A-Za-z]', name):
+            return False
+
+        # Filter out generic phrases
+        generic_terms = {
+            'job', 'apply', 'save', 'account', 'login', 'sign in',
+            'post a job', 'latest news', 'hiring companies', 'careers',
+            'you need', 'create an account', 'maximum exposure'
+        }
+
+        if name.lower().strip() in generic_terms:
+            return False
+
+        # Must start with letter or number (not special char)
+        if not re.match(r'^[A-Za-z0-9]', name):
+            return False
+
+        return True
 
     def _clean_company_name(self, name: str) -> str:
         """Clean and standardize company names"""
