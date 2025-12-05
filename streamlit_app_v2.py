@@ -323,6 +323,7 @@ def main():
                 column_config={
                     "publisher": st.column_config.TextColumn("Publisher", width="medium"),
                     "title": st.column_config.TextColumn("Title", width="large"),
+                    "author": st.column_config.TextColumn("👤 Author", width="medium"),
                     "url": st.column_config.LinkColumn("Read", width="small"),
                     "published_at": st.column_config.TextColumn("Published", width="small"),
                     "source": st.column_config.TextColumn("Source", width="small"),
