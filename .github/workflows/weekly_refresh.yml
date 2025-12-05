@@ -3,8 +3,8 @@ name: Weekly Data Refresh
 # TEMPORARILY SET TO HOURLY FOR TESTING - Will revert to weekly after testing
 on:
   schedule:
-    - cron: "0 * * * *" # Every hour (FOR TESTING ONLY)
-    # - cron: "0 8 * * 1" # Every Monday at 8 AM UTC (PRODUCTION - uncomment after testing)
+    # - cron: "0 * * * *" # Every hour (FOR TESTING ONLY - disabled after successful test)
+    - cron: "0 15 * * 6" # Every Saturday at 8 AM PDT (3 PM UTC)
   workflow_dispatch: # Allow manual trigger
 
 jobs:

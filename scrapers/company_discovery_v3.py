@@ -1197,10 +1197,12 @@ class CompanyDiscoveryV3:
         # Filter out UI text fragments
         invalid_patterns = [
             r'\btosign\b', r'\binorcreate\b', r'\baccount\b.*\bsave\b',
-            r'^e\s', r'need\s*to', r'sign\s*in', r'create\s*an',
+            r'^e\s', r'^e$', r'need\s*to', r'sign\s*in', r'create\s*an',
             r'POST\s*A\s*JOB', r'apply\s*for', r'maximum\s*exposure',
-            r'Hiring\s*Companies', r'Latest\s*News', r'Why\s*choose',
-            r'need.*account', r'You\s*need', r'Apply$'
+            r'^Hiring\s*Companies$', r'^Latest\s*News$', r'Why\s*choose',
+            r'need.*account', r'You\s*need', r'Apply$',
+            r'^ed\s*Today', r'^es\s*to\s*apply', r'^terson\s', r'^ion\s',
+            r'See\s*wha$', r'Description\s*See', r'Not\s*Specified'
         ]
 
         for pattern in invalid_patterns:
@@ -1215,7 +1217,9 @@ class CompanyDiscoveryV3:
         generic_terms = {
             'job', 'apply', 'save', 'account', 'login', 'sign in',
             'post a job', 'latest news', 'hiring companies', 'careers',
-            'you need', 'create an account', 'maximum exposure'
+            'you need', 'create an account', 'maximum exposure',
+            'ed today', 'ed todayts', 'ed todaysecret', 'terson air force bas',
+            'es to apply for maximum exposure', 'ion engineer'
         }
 
         if name.lower().strip() in generic_terms:
