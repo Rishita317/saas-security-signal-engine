@@ -3,14 +3,14 @@
 # Data collection happens via GitHub Actions automation
 
 # Dashboard (Core requirement)
-streamlit==1.29.0
+streamlit>=1.29.0
 
-# Data Processing
-pandas==2.1.4
-python-dotenv==1.0.0
+# Data Processing (using newer pandas for Python 3.13 compatibility)
+pandas>=2.2.0
+python-dotenv>=1.0.0
 
 # Utilities
-python-dateutil==2.8.2
+python-dateutil>=2.8.2
 
 # Note: Heavy dependencies (scrapy, selenium, spacy, etc.) are NOT needed
 # for the dashboard deployment. They're only used in GitHub Actions for data collection.
