@@ -1,0 +1,2 @@
+# System packages for Streamlit Cloud
+# This app only displays CSV data, so no special packages needed

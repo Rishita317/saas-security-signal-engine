@@ -1,39 +1,16 @@
-# Web Scraping
-scrapy==2.11.0
-beautifulsoup4==4.12.2
-requests==2.31.0
+# Production requirements for Streamlit Cloud deployment
+# This app displays pre-collected data from CSV files
+# Data collection happens via GitHub Actions automation
 
-# Reddit API
-praw==7.7.1
-
-# RSS Feed Parsing
-feedparser==6.0.10
-
-# NLP & Entity Extraction
-spacy==3.7.2
-
-# AI APIs
-google-generativeai==0.8.3  # Google Gemini (FREE)
-openai==1.6.1  # OpenAI GPT-4 Mini (Optional fallback)
-
-# Database
-supabase==2.3.0
-psycopg2-binary==2.9.9
+# Dashboard (Core requirement)
+streamlit==1.29.0
 
 # Data Processing
 pandas==2.1.4
 python-dotenv==1.0.0
 
-# Orchestration
-modal==0.57.0
-
-# Dashboard
-streamlit==1.29.0
-plotly==5.18.0
-
 # Utilities
 python-dateutil==2.8.2
-pytz==2023.3
 
-# Optional - for Twitter scraping via Apify
-apify-client==1.6.0
+# Note: Heavy dependencies (scrapy, selenium, spacy, etc.) are NOT needed
+# for the dashboard deployment. They're only used in GitHub Actions for data collection.
