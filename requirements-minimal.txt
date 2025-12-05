@@ -4,6 +4,8 @@
 # Web Scraping
 beautifulsoup4
 requests
+selenium
+webdriver-manager
 
 # Reddit API (optional - using mock data for now)
 # praw
