@@ -88,6 +88,7 @@ def main():
             conversation_details.append({
                 'publisher': company_name,
                 'title': post.get('title', ''),
+                'author': post.get('author', 'Unknown'),
                 'url': post.get('url', ''),
                 'published_at': post.get('published_at', ''),
                 'source': post.get('source', '')

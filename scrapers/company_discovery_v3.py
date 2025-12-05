@@ -1116,8 +1116,79 @@ class CompanyDiscoveryV3:
         print(f"   ✅ BambooHR: Found {len(discovered)} companies")
         return discovered
 
+    def _extract_author_from_url(self, url: str) -> str:
+        """
+        Extract author name from article URL by fetching and parsing the page
+
+        Returns:
+            Author name or "Unknown" if not found
+        """
+        try:
+            response = requests.get(
+                url,
+                headers={'User-Agent': 'Mozilla/5.0'},
+                timeout=8
+            )
+
+            if response.status_code != 200:
+                return "Unknown"
+
+            soup = BeautifulSoup(response.content, 'html.parser')
+
+            # Strategy 1: Look for common author meta tags
+            meta_author = soup.find('meta', {'name': re.compile(r'author', re.I)})
+            if meta_author and meta_author.get('content'):
+                author = meta_author['content'].strip()
+                if author and len(author) < 100:
+                    return author
+
+            # Strategy 2: Look for schema.org structured data
+            schema_author = soup.find('span', {'itemprop': 'author'})
+            if schema_author:
+                author = schema_author.get_text(strip=True)
+                if author and len(author) < 100:
+                    return author
+
+            # Strategy 3: Look for common author class names
+            author_patterns = [
+                ('div', {'class': re.compile(r'author|byline|writer|posted-by', re.I)}),
+                ('span', {'class': re.compile(r'author|byline|writer|posted-by', re.I)}),
+                ('p', {'class': re.compile(r'author|byline|writer', re.I)}),
+                ('a', {'rel': 'author'}),
+                ('div', {'class': 'author-name'}),
+                ('span', {'class': 'author-name'})
+            ]
+
+            for tag, attrs in author_patterns:
+                author_elem = soup.find(tag, attrs)
+                if author_elem:
+                    author_text = author_elem.get_text(strip=True)
+                    # Clean up common prefixes
+                    author_text = re.sub(r'^(by|written by|author:|posted by|from)\s*', '', author_text, flags=re.I)
+                    # Remove dates and other noise
+                    author_text = re.sub(r'\d{1,2}[/-]\d{1,2}[/-]\d{2,4}', '', author_text)
+                    author_text = author_text.strip()
+
+                    if author_text and 3 < len(author_text) < 100:
+                        # Validate it looks like a name (not a date or URL)
+                        if not re.search(r'http|www|\d{4}|january|february|march|april|may|june|july|august|september|october|november|december', author_text, re.I):
+                            return author_text
+
+            # Strategy 4: Look for "Written By" or "By" text patterns
+            text_content = soup.get_text()
+            by_match = re.search(r'(?:written by|by|author:)\s*([A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,3})', text_content)
+            if by_match:
+                author = by_match.group(1).strip()
+                if 3 < len(author) < 100:
+                    return author
+
+            return "Unknown"
+
+        except Exception as e:
+            return "Unknown"
+
     def _discover_conversation_signals(self, target_posts: int):
-        """Discover conversation signals from RSS feeds"""
+        """Discover conversation signals from RSS feeds and extract authors"""
         print(f"\n💬 CONVERSATION SIGNAL DISCOVERY")
         print("=" * 70)
         print(f"Target: {target_posts} quality posts from Top 10 publishers")
@@ -1156,12 +1227,18 @@ class CompanyDiscoveryV3:
                             'ransomware', 'malware', 'phishing', 'zero-day', 'exploit',
                             'cloud', 'saas', 'sspm', 'iam', 'compliance', 'encryption'
                         ]):
+                            # Extract author from the article URL
+                            print(f"      🔍 Extracting author from: {link_text[:50]}...")
+                            author = self._extract_author_from_url(link_text)
+                            print(f"      👤 Author: {author}")
+
                             # Add to companies dict
                             if publisher not in self.companies:
                                 self.companies[publisher] = {'hiring': [], 'conversations': []}
 
                             self.companies[publisher]['conversations'].append({
                                 'title': title_text,
+                                'author': author,
                                 'url': link_text,
                                 'published_at': pub_date.text if pub_date else 'Recent',
                                 'source': 'RSS Feed'
