@@ -59,7 +59,12 @@ st.markdown("""
 
 
 def load_latest_data():
-    """Load the most recent data files"""
+    """
+    Load and merge data from multiple sources:
+    1. Load the most comprehensive historical dataset (most companies)
+    2. Merge with the newest additions from recent runs
+    This ensures we keep all historical data while adding new discoveries
+    """
     try:
         # Find the latest week directory
         week_dirs = glob.glob("data/weekly/2025_W*")
@@ -68,7 +73,7 @@ def load_latest_data():
 
         latest_week = max(week_dirs)
 
-        # Find latest files in that week
+        # Find all files in that week
         company_tracker_files = glob.glob(f"{latest_week}/company_tracker_*.csv")
         hiring_details_files = glob.glob(f"{latest_week}/hiring_details_*.csv")
         conversation_files = glob.glob(f"{latest_week}/conversation_details_*.csv")
@@ -76,28 +81,58 @@ def load_latest_data():
         if not company_tracker_files:
             return None, None, None, latest_week
 
-        # Load the file with the MOST companies (best data quality)
-        # This avoids loading failed runs that may have fewer companies
-        def get_best_file(files):
-            best_file = None
-            max_rows = 0
-            for f in files:
-                try:
-                    row_count = pd.read_csv(f).shape[0]
-                    if row_count > max_rows:
-                        max_rows = row_count
-                        best_file = f
-                except:
-                    continue
-            return best_file
+        # Sort files by timestamp (newest first)
+        company_tracker_files = sorted(company_tracker_files, reverse=True)
+        hiring_details_files = sorted(hiring_details_files, reverse=True) if hiring_details_files else []
+        conversation_files = sorted(conversation_files, reverse=True) if conversation_files else []
 
-        latest_tracker = get_best_file(company_tracker_files)
-        latest_hiring = get_best_file(hiring_details_files) if hiring_details_files else None
-        latest_conversation = get_best_file(conversation_files) if conversation_files else None
+        # Load and merge company tracker data
+        all_trackers = []
+        for f in company_tracker_files[:5]:  # Merge up to 5 most recent files
+            try:
+                df = pd.read_csv(f)
+                if len(df) > 0:  # Skip empty files
+                    all_trackers.append(df)
+            except:
+                continue
 
-        company_tracker = pd.read_csv(latest_tracker)
-        hiring_details = pd.read_csv(latest_hiring) if latest_hiring else pd.DataFrame()
-        conversation_details = pd.read_csv(latest_conversation) if latest_conversation else pd.DataFrame()
+        if all_trackers:
+            # Merge and deduplicate by company_name, keeping the most recent entry
+            company_tracker = pd.concat(all_trackers, ignore_index=True)
+            company_tracker = company_tracker.drop_duplicates(subset=['company_name'], keep='first')
+            company_tracker = company_tracker.sort_values('last_updated', ascending=False)
+        else:
+            return None, None, None, latest_week
+
+        # Load and merge hiring details
+        all_hiring = []
+        for f in hiring_details_files[:5]:
+            try:
+                df = pd.read_csv(f)
+                if len(df) > 0:
+                    all_hiring.append(df)
+            except:
+                continue
+
+        hiring_details = pd.concat(all_hiring, ignore_index=True) if all_hiring else pd.DataFrame()
+        if len(hiring_details) > 0:
+            # Deduplicate by company_name + title + url
+            hiring_details = hiring_details.drop_duplicates(subset=['company_name', 'title', 'url'], keep='first')
+
+        # Load and merge conversation details
+        all_conversations = []
+        for f in conversation_files[:5]:
+            try:
+                df = pd.read_csv(f)
+                if len(df) > 0:
+                    all_conversations.append(df)
+            except:
+                continue
+
+        conversation_details = pd.concat(all_conversations, ignore_index=True) if all_conversations else pd.DataFrame()
+        if len(conversation_details) > 0:
+            # Deduplicate by publisher + title + url
+            conversation_details = conversation_details.drop_duplicates(subset=['publisher', 'title', 'url'], keep='first')
 
         return company_tracker, hiring_details, conversation_details, latest_week
 
