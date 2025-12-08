@@ -439,7 +439,7 @@ def main():
     # Footer
     st.markdown("---")
     st.markdown(f"*Last updated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}*")
-    st.markdown("*Data refreshes weekly on Mondays at 8 AM UTC*")
+    st.markdown("*Data refreshes weekly on Fridays at 8 AM PT*")
 
 
 if __name__ == "__main__":
