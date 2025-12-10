@@ -4,7 +4,7 @@ name: Weekly Data Refresh
 on:
   schedule:
     # - cron: "0 * * * *" # Every hour (FOR TESTING ONLY - disabled after successful test)
-    - cron: "0 15 * * 5" # Every Friday at 8 AM PDT (3 PM UTC)
+    - cron: "0 13 * * 5" # Every Friday at 6 AM PDT (1 PM UTC)
   workflow_dispatch: # Allow manual trigger
 
 jobs:
