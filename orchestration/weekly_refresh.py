@@ -28,23 +28,43 @@ def main():
     # Initialize V3 discovery engine
     engine = CompanyDiscoveryV3()
 
-    # Run all data sources
+    # Run all data sources (with error handling to ensure pipeline completes)
     print("\n1️⃣ Running Indeed scraping...")
-    engine._scrape_indeed(max_companies=400)
+    try:
+        engine._scrape_indeed(max_companies=400)
+    except Exception as e:
+        print(f"   ⚠️  Indeed scraping failed: {str(e)[:100]}")
+        print("   ℹ️  Continuing with other sources...")
 
     print("\n2️⃣ Running VC Portfolio scraping (25+ VCs)...")
-    engine._scrape_vc_portfolios(max_companies=600)
+    try:
+        engine._scrape_vc_portfolios(max_companies=600)
+    except Exception as e:
+        print(f"   ⚠️  VC scraping failed: {str(e)[:100]}")
+        print("   ℹ️  Continuing with other sources...")
 
     print("\n3️⃣ Running Security Job Boards...")
-    engine._scrape_security_job_boards(max_companies=50)
+    try:
+        engine._scrape_security_job_boards(max_companies=50)
+    except Exception as e:
+        print(f"   ⚠️  Job boards failed: {str(e)[:100]}")
+        print("   ℹ️  Continuing with other sources...")
 
     print("\n4️⃣ Running Direct ATS Discovery...")
-    engine._scrape_greenhouse_direct(max_companies=20)
-    engine._scrape_lever_direct(max_companies=20)
-    engine._scrape_workday_direct(max_companies=20)
+    try:
+        engine._scrape_greenhouse_direct(max_companies=20)
+        engine._scrape_lever_direct(max_companies=20)
+        engine._scrape_workday_direct(max_companies=20)
+    except Exception as e:
+        print(f"   ⚠️  ATS scraping failed: {str(e)[:100]}")
+        print("   ℹ️  Continuing with other sources...")
 
     print("\n5️⃣ Running Conversation Signal Discovery...")
-    engine._discover_conversation_signals(target_posts=30)
+    try:
+        engine._discover_conversation_signals(target_posts=30)
+    except Exception as e:
+        print(f"   ⚠️  Conversation signals failed: {str(e)[:100]}")
+        print("   ℹ️  Pipeline will still save data collected so far...")
 
     # Generate and save data
     print("\n📊 Generating output files...")

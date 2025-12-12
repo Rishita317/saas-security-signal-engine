@@ -3,6 +3,7 @@
 
 # Web Scraping
 beautifulsoup4
+lxml  # Required for XML/RSS feed parsing in conversation signals
 requests
 selenium
 webdriver-manager
