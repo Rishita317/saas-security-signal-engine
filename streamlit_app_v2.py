@@ -60,35 +60,52 @@ st.markdown("""
 
 def load_latest_data():
     """
-    Load and merge data from multiple sources:
-    1. Load the most comprehensive historical dataset (most companies)
-    2. Merge with the newest additions from recent runs
-    This ensures we keep all historical data while adding new discoveries
+    Load and merge data from multiple weeks and files:
+    1. Find all week directories (sorted newest first)
+    2. Merge files from the last 3 weeks to preserve historical data
+    3. Deduplicate to avoid duplicates while keeping all companies
+    This ensures we never lose data when new weeks start
     """
     try:
-        # Find the latest week directory
-        week_dirs = glob.glob("data/weekly/2025_W*")
+        # Find all week directories (sorted newest first)
+        week_dirs = sorted(glob.glob("data/weekly/2025_W*"), reverse=True)
         if not week_dirs:
             return None, None, None, None
 
-        latest_week = max(week_dirs)
+        latest_week = week_dirs[0]  # Track for display purposes
 
-        # Find all files in that week
-        company_tracker_files = glob.glob(f"{latest_week}/company_tracker_*.csv")
-        hiring_details_files = glob.glob(f"{latest_week}/hiring_details_*.csv")
-        conversation_files = glob.glob(f"{latest_week}/conversation_details_*.csv")
+        # Take last 3 weeks to ensure we capture all historical data
+        recent_weeks = week_dirs[:3]
 
-        if not company_tracker_files:
+        # Collect all company_tracker files from recent weeks
+        all_company_tracker_files = []
+        for week_dir in recent_weeks:
+            files = glob.glob(f"{week_dir}/company_tracker_*.csv")
+            all_company_tracker_files.extend(files)
+
+        # Collect all hiring_details files from recent weeks
+        all_hiring_files = []
+        for week_dir in recent_weeks:
+            files = glob.glob(f"{week_dir}/hiring_details_*.csv")
+            all_hiring_files.extend(files)
+
+        # Collect all conversation_details files from recent weeks
+        all_conversation_files = []
+        for week_dir in recent_weeks:
+            files = glob.glob(f"{week_dir}/conversation_details_*.csv")
+            all_conversation_files.extend(files)
+
+        if not all_company_tracker_files:
             return None, None, None, latest_week
 
-        # Sort files by timestamp (newest first)
-        company_tracker_files = sorted(company_tracker_files, reverse=True)
-        hiring_details_files = sorted(hiring_details_files, reverse=True) if hiring_details_files else []
-        conversation_files = sorted(conversation_files, reverse=True) if conversation_files else []
+        # Sort all files by timestamp (newest first)
+        all_company_tracker_files = sorted(all_company_tracker_files, reverse=True)
+        all_hiring_files = sorted(all_hiring_files, reverse=True)
+        all_conversation_files = sorted(all_conversation_files, reverse=True)
 
-        # Load and merge company tracker data
+        # Load and merge company tracker data from ALL recent files
         all_trackers = []
-        for f in company_tracker_files[:5]:  # Merge up to 5 most recent files
+        for f in all_company_tracker_files:  # Load ALL files, not just 5
             try:
                 df = pd.read_csv(f)
                 if len(df) > 0:  # Skip empty files
@@ -104,9 +121,9 @@ def load_latest_data():
         else:
             return None, None, None, latest_week
 
-        # Load and merge hiring details
+        # Load and merge hiring details from ALL recent files
         all_hiring = []
-        for f in hiring_details_files[:5]:
+        for f in all_hiring_files:
             try:
                 df = pd.read_csv(f)
                 if len(df) > 0:
@@ -119,9 +136,9 @@ def load_latest_data():
             # Deduplicate by company_name + title + url
             hiring_details = hiring_details.drop_duplicates(subset=['company_name', 'title', 'url'], keep='first')
 
-        # Load and merge conversation details
+        # Load and merge conversation details from ALL recent files
         all_conversations = []
-        for f in conversation_files[:5]:
+        for f in all_conversation_files:
             try:
                 df = pd.read_csv(f)
                 if len(df) > 0:
