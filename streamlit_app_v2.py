@@ -68,7 +68,7 @@ def load_latest_data():
     """
     try:
         # Find all week directories (sorted newest first)
-        week_dirs = sorted(glob.glob("data/weekly/2025_W*"), reverse=True)
+        week_dirs = sorted(glob.glob("data/weekly/20*_W*"), reverse=True)
         if not week_dirs:
             return None, None, None, None
 
