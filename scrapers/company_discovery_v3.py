@@ -463,8 +463,18 @@ class CompanyDiscoveryV3:
                     if len(company_name) < 2 or not re.match(r'^[A-Za-z0-9\s\.\-&]+$', company_name):
                         continue
 
-                    # Skip common false positives
-                    if company_name.lower() in ['view all', 'learn more', 'read more', 'see more', 'portfolio', 'companies']:
+                    # Use the comprehensive validation function
+                    if not self._is_valid_company_name(company_name):
+                        continue
+
+                    # Additional VC-specific false positives
+                    vc_false_positives = [
+                        'view all', 'learn more', 'read more', 'see more', 'portfolio', 'companies',
+                        'our founders', 'our companies', 'stories', 'arc', 'spotlights', 'all',
+                        'our ethos', 'our history', 'jobs', 'legal', 'connect', 'skip to main content',
+                        'lp login', 'login', 'about', 'team', 'contact', 'news', 'blog', 'press'
+                    ]
+                    if company_name.lower() in vc_false_positives:
                         continue
 
                     discovered.add(company_name)
@@ -1278,12 +1288,18 @@ class CompanyDiscoveryV3:
         # Filter out UI text fragments
         invalid_patterns = [
             r'\btosign\b', r'\binorcreate\b', r'\baccount\b.*\bsave\b',
-            r'^e\s', r'^e$', r'need\s*to', r'sign\s*in', r'create\s*an',
+            r'^e\s', r'^e$', r'^e\s+an', r'need\s*to', r'sign\s*in', r'create\s*an',
             r'POST\s*A\s*JOB', r'apply\s*for', r'maximum\s*exposure',
             r'^Hiring\s*Companies$', r'^Latest\s*News$', r'Why\s*choose',
             r'need.*account', r'You\s*need', r'Apply$',
-            r'^ed\s*Today', r'^es\s*to\s*apply', r'^terson\s', r'^ion\s',
-            r'See\s*wha$', r'Description\s*See', r'Not\s*Specified'
+            r'^ed\s*Today', r'^es\s*to\s*apply', r'^terson\s', r'^ion\s', r'^ions\s',
+            r'See\s*wha$', r'Description\s*See', r'Not\s*Specified',
+            r'Skip to', r'Our (Founders|Companies|Ethos|History)', r'^Stories$', r'^Arc$',
+            r'^Spotlights$', r'^All$', r'^Jobs$', r'^Legal$', r'^Connect$',
+            r'Login$', r'^About$', r'^Team$', r'^Contact$', r'^News$', r'^Blog$', r'^Press$',
+            r'^is\s', r'^est\s', r'Category Manager', r'Intelligence Analyst.*You need',
+            r'Consultant.*You need', r'Manager.*You need', r'Analyst.*You need',
+            r'.*You need tosign', r'Centre$', r'Cyber Security.*Why choose'
         ]
 
         for pattern in invalid_patterns:
@@ -1300,7 +1316,12 @@ class CompanyDiscoveryV3:
             'post a job', 'latest news', 'hiring companies', 'careers',
             'you need', 'create an account', 'maximum exposure',
             'ed today', 'ed todayts', 'ed todaysecret', 'terson air force bas',
-            'es to apply for maximum exposure', 'ion engineer'
+            'es to apply for maximum exposure', 'ion engineer', 'e account',
+            'ions centre', 'ion', 'ions analyst', 'est news', 'hiring companies',
+            'skip to main content', 'our founders', 'our companies', 'stories',
+            'arc', 'spotlights', 'all', 'jobs', 'legal', 'sequoia capital',
+            'sequoia heritage', 'sequoia capital global equities', 'lp login',
+            'sequoia ampersand login', 'connect', 'our ethos', 'our history'
         }
 
         if name.lower().strip() in generic_terms:
