@@ -6,7 +6,7 @@ NEW APPROACH:
 - 3 Tabs: Company Tracker, Hiring Signals, Conversation Signals
 - Priority scoring: Both (3) > Hiring Only (2) > Talking Only (1)
 
-Last Updated: December 5, 2025 - Fresh data from automated weekly refresh
+Last Updated: January 9, 2026 - Fresh data from automated weekly refresh
 """
 
 import streamlit as st
