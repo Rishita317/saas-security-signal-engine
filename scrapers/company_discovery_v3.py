@@ -469,6 +469,10 @@ class CompanyDiscoveryV3:
 
                     discovered.add(company_name)
 
+                    # Add to companies dict for tracking
+                    if company_name not in self.companies:
+                        self.companies[company_name] = {'hiring': [], 'conversations': []}
+
                     if len(discovered) % 25 == 0:
                         print(f"      ✅ Found: {len(discovered)} companies so far...")
 
